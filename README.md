@@ -8,10 +8,8 @@ Django Smart Session Engine allows django application to do more with its sessio
 
 
 ## Installation
+**TODO**
 
-```
-pip install -e "git+https://ui/django-smart-session-engine@master#egg=smart_session_engine"
-```
 
 
 ## Dependencies
@@ -31,3 +29,15 @@ SMART_SESSION_ENGINE_CONNECTION_URL = "redis://127.0.0.1:6379/1"
 
 ## How to use
 
+**TODO**
+
+
+## Testing
+```
+django-admin.py test smart_session_engine.tests --settings=smart_session_engine.tests.settings --pythonpath=.
+```
+
+
+
+##### Disclaimer
+Created and maintained by [Stamps](https://stamps.co.id/), Indonesia's most elegant CRM/loyalty platform.
