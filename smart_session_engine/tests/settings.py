@@ -14,11 +14,14 @@ DATABASES = {
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
         'TIMEOUT': 36000,
-        'KEY_PREFIX': 'smart-session',
+        'KEY_PREFIX': 'smart-session-test',
     },
 }
+SESSION_ENGINE = "libraries.smart_session_engine.session_engine"
+SMART_SESSION_ENGINE_CONNECTION_URL = "redis://127.0.0.1:6379/1"
 
 
 INSTALLED_APPS = (
@@ -40,7 +43,3 @@ MIDDLEWARE = [
 
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'tests/static')]
-
-
-SESSION_ENGINE = "libraries.smart_session_engine.session_engine"
-SMART_SESSION_ENGINE_CONNECTION_URL = "redis://127.0.0.1:6379/1"

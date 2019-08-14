@@ -6,6 +6,10 @@ from django.contrib.sessions.backends.cache import SessionStore as CacheSessionS
 class SessionStore(CacheSessionStore):
 
     def _get_user_mapping_key(self, user_id):
+        # What we want
+        # return "%s:session_id:%s" % (self._cache.key_prefix, user_id)
+
+        # This is the original
         return "session_id:%s" % user_id
 
     def save(self, *args, **kwargs):
@@ -17,7 +21,7 @@ class SessionStore(CacheSessionStore):
         if user_id:
             pipeline = redis.pipeline()
             pipeline.sadd(self._get_user_mapping_key(user_id), self.session_key)
-            pipeline.expire(self._get_user_mapping_key(user_id), self._cache["TIMEOUT"])
+            pipeline.expire(self._get_user_mapping_key(user_id), self._cache.default_timeout)
             pipeline.execute()
 
     def delete(self, session_key=None):
