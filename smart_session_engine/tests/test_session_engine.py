@@ -25,10 +25,10 @@ class SessionEngineTest(TestCase):
         session.save()
 
         # Make sure the set is created correctly
-        self.assertEqual(self.redis.scard(session._get_user_mapping_key("123")), 1)
+        self.assertEqual(self.redis.scard(session._get_key("123")), 1)
 
         # Every time user logs in, the mapping is updated
         session = SessionStore(session_key="aaaaaaaa1235")
         session["_auth_user_id"] = "123"
         session.save()
-        self.assertEqual(self.redis.scard(session._get_user_mapping_key("123")), 2)
+        self.assertEqual(self.redis.scard(session._get_key("123")), 2)
