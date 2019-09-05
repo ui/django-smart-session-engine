@@ -19,9 +19,10 @@ class SessionStore(CacheSessionStore):
         redis = get_redis_connection()
         user_id = self._get_session(no_load=must_create).get('_auth_user_id', None)
         if user_id:
+            key = self._get_key(user_id)
             pipeline = redis.pipeline()
-            pipeline.sadd(self._get_key(user_id), self.session_key)
-            pipeline.expire(self._get_key(user_id), self._cache.default_timeout)
+            pipeline.sadd(key, self.session_key)
+            pipeline.expire(key, self._cache.default_timeout)
             pipeline.execute()
 
     def delete(self, session_key=None):
