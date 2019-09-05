@@ -5,7 +5,7 @@ from django.contrib.sessions.backends.cache import SessionStore as CacheSessionS
 
 class SessionStore(CacheSessionStore):
 
-    def _get_user_mapping_key(self, user_id):
+    def _get_key(self, user_id):
         # What we want
         # return "%s:session_id:%s" % (self._cache.key_prefix, user_id)
 
@@ -20,8 +20,8 @@ class SessionStore(CacheSessionStore):
         user_id = self._get_session(no_load=must_create).get('_auth_user_id', None)
         if user_id:
             pipeline = redis.pipeline()
-            pipeline.sadd(self._get_user_mapping_key(user_id), self.session_key)
-            pipeline.expire(self._get_user_mapping_key(user_id), self._cache.default_timeout)
+            pipeline.sadd(self._get_key(user_id), self.session_key)
+            pipeline.expire(self._get_key(user_id), self._cache.default_timeout)
             pipeline.execute()
 
     def delete(self, session_key=None):
@@ -30,6 +30,6 @@ class SessionStore(CacheSessionStore):
         session_key = session_key or self.session_key
         user_id = self.load().get('_auth_user_id', None)
         if user_id:
-            redis.srem(self._get_user_mapping_key(user_id), session_key)
+            redis.srem(self._get_key(user_id), session_key)
 
         super(SessionStore, self).delete(session_key)
