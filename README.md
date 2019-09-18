@@ -23,7 +23,7 @@ Django Smart Session Engine allows django application to do more with its sessio
 Put the following in `settings.py`
 
 ```
-SESSION_ENGINE = "libraries.smart_session_engine.session_engine"
+SESSION_ENGINE = "smart_session_engine.session_engine"
 SMART_SESSION_ENGINE_CONNECTION_URL = "redis://127.0.0.1:6379/1"
 ```
 
