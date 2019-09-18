@@ -1,5 +1,6 @@
 from .utils import get_redis_connection
 
+from django.conf import settings
 from django.contrib.sessions.backends.cache import SessionStore as CacheSessionStore
 
 
@@ -22,7 +23,7 @@ class SessionStore(CacheSessionStore):
             key = self._get_key(user_id)
             pipeline = redis.pipeline()
             pipeline.sadd(key, self.session_key)
-            pipeline.expire(key, self._cache.default_timeout)
+            pipeline.expire(key, settings.SESSION_COOKIE_AGE)
             pipeline.execute()
 
     def delete(self, session_key=None):
