@@ -31,6 +31,8 @@ class SessionStore(CacheSessionStore):
         redis = get_redis_connection()
         session_key = session_key or self.session_key
         user_id = self.load().get('_auth_user_id', None)
+        
+        session_key = str(session_key)
         if user_id:
             redis.srem(self._get_key(user_id), session_key)
 
