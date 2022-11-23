@@ -32,7 +32,7 @@ class SessionStore(CacheSessionStore):
         session_key = session_key or self.session_key
         user_id = self.load().get('_auth_user_id', None)
 
-        if session_key:
+        if session_key and isinstance(session_key, bytes):
             session_key = session_key.decode('utf-8')
 
         if user_id:
