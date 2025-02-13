@@ -51,7 +51,6 @@ class SessionEngineTest(TestCase):
         self.assertEqual(self.redis.scard(session._get_key("123")), 2)
 
     def test_delete_multiple_session_keys(self) -> None:
-        print("New test tested")
         user1 = User(id=5678921)
         user2 = User(id=5678922)
         user3 = User(id=5678923)
