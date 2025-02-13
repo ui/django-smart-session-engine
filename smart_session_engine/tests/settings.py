@@ -43,3 +43,9 @@ MIDDLEWARE = [
 
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'tests/static')]
+
+
+try:
+    from .local_settings import *  # type: ignore  # noqa
+except ImportError:
+    pass

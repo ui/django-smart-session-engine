@@ -1,4 +1,5 @@
-from .utils import get_redis_connection
+from typing import List
+from .utils import get_redis_connection, get_user_key
 
 from django.conf import settings
 from django.contrib.sessions.backends.cache import SessionStore as CacheSessionStore
@@ -35,3 +36,15 @@ class SessionStore(CacheSessionStore):
             redis.srem(self._get_key(user_id), session_key)
 
         super(SessionStore, self).delete(session_key)
+
+    def delete_multiples_session_keys(self, list_of_users: List):
+        redis = get_redis_connection()
+        pipeline = redis.pipeline()
+        for user in list_of_users:
+            keys = redis.smembers(get_user_key(user))
+            decoded_keys = [key.decode('utf-8') for key in list(keys)]
+
+            for session_key in decoded_keys:
+                pipeline.srem(self._get_key(user.id), session_key)
+
+        pipeline.execute(raise_on_error=True)
