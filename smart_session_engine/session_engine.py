@@ -39,12 +39,23 @@ class SessionStore(CacheSessionStore):
 
     def delete_multiples_session_keys(self, list_of_users: List):
         redis = get_redis_connection()
-        pipeline = redis.pipeline()
+        # First pipeline to get all keys
+        get_pipeline = redis.pipeline()
+
+        # Queue up all smembers commands
         for user in list_of_users:
-            keys = redis.smembers(get_user_key(user))
-            decoded_keys = [key.decode('utf-8') for key in list(keys)]
+            get_pipeline.smembers(get_user_key(user))
 
+        # Execute and get all session keys
+        all_sessions = get_pipeline.execute()
+
+        # Second pipeline for deletion
+        delete_pipeline = redis.pipeline()
+
+        # Process results and queue deletions
+        for user, sessions in zip(list_of_users, all_sessions):
+            decoded_keys = [key.decode('utf-8') for key in sessions]
             for session_key in decoded_keys:
-                pipeline.srem(self._get_key(user.id), session_key)
+                delete_pipeline.srem(self._get_key(str(user.id)), session_key)
 
-        pipeline.execute(raise_on_error=True)
+        delete_pipeline.execute(raise_on_error=True)
