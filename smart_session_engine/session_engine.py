@@ -57,5 +57,7 @@ class SessionStore(CacheSessionStore):
             decoded_keys = [key.decode('utf-8') for key in sessions]
             for session_key in decoded_keys:
                 delete_pipeline.srem(self._get_key(str(user.id)), session_key)
+                # Call parent's delete function to delete cache
+                super(SessionStore, self).delete(session_key)
 
         delete_pipeline.execute(raise_on_error=True)
