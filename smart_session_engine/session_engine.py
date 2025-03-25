@@ -37,27 +37,26 @@ class SessionStore(CacheSessionStore):
 
         super(SessionStore, self).delete(session_key)
 
-    def delete_multiples_session_keys(self, list_of_users: List):
+    def delete_many(self, users: List):
+        """users: List of User objects"""
+
         redis = get_redis_connection()
         # First pipeline to get all keys
-        get_pipeline = redis.pipeline()
+        pipeline = redis.pipeline()
 
         # Queue up all smembers commands
-        for user in list_of_users:
-            get_pipeline.smembers(get_user_key(user))
+        for user in users:
+            pipeline.smembers(get_user_key(user))
 
         # Execute and get all session keys
-        all_sessions = get_pipeline.execute()
-
-        # Second pipeline for deletion
-        delete_pipeline = redis.pipeline()
+        all_sessions = pipeline.execute()
 
         # Process results and queue deletions
-        for user, sessions in zip(list_of_users, all_sessions):
+        for user, sessions in zip(users, all_sessions):
             decoded_keys = [key.decode('utf-8') for key in sessions]
             for session_key in decoded_keys:
-                delete_pipeline.srem(self._get_key(str(user.id)), session_key)
+                pipeline.srem(self._get_key(str(user.id)), session_key)
                 # Call parent's delete function to delete cache
                 super(SessionStore, self).delete(session_key)
 
-        delete_pipeline.execute(raise_on_error=True)
+        pipeline.execute(raise_on_error=True)
