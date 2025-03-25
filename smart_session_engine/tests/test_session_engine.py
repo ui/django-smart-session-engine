@@ -80,7 +80,7 @@ class SessionEngineTest(TestCase):
         self.assertEqual(self.redis.scard(session._get_key(str(user3.id))), 1)
 
         # Delete all keys for user 1 & 2
-        SessionStore().delete_many([user1, user2])
+        SessionStore().delete_many([user1.id, user2.id])
         self.assertEqual(self.redis.scard(session._get_key(str(user1.id))), 0)
         self.assertEqual(self.redis.scard(session._get_key(str(user2.id))), 0)
         # Still 1 since we didn't delete user3 session keys
